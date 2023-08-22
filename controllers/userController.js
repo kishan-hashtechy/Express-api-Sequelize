@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler")
+const User = require("../models/User")
 
 // @desc Get user information
 // @route GET /api/user
@@ -13,7 +14,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
 // @access public
 const userRegister = asyncHandler(async (req, res) => {
     res.status(200)
-    res.json("Get User Register successfully Called")
+    res.json({messsage: "Get User Register successfully Called"})
 })
 
 // @desc Register a user
