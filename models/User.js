@@ -17,6 +17,10 @@ const User  = sequelize.define('User', {
         allowNull: false
     },
 
+    accessToken: {
+        type: DataTypes.STRING
+    },
+
     password: {
         type: DataTypes.STRING,
         allowNull: false
@@ -33,4 +37,4 @@ const User  = sequelize.define('User', {
     }
 })
 
-module.exports = User
+module.exports = {User}

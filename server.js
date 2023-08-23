@@ -5,8 +5,8 @@ const User = require("./models/User")
 
 const app = express();
 const port = process.env.PORT || 5001;
-User.sync({ alter: true })
 
+app.use(express.json())
 app.use("/api/user", require("./routes/userRoutes"));
 
 app.listen(port, (error) => {
