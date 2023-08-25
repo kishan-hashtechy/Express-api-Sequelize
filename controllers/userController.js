@@ -7,16 +7,16 @@ const jwt = require("jsonwebtoken");
 // @route GET /api/user
 // @access private
 const getUserInfo = asyncHandler(async (req, res) => {
-    const data = db.User.findAll()
-  res.status(200);
-  res.json({ message: "Get User Information successfully Called", data});
+  const data = await db.User.findAll();
+  res
+    .status(200)
+    .json({ message: "Get User Information successfully Called", data });
 });
 
 // @desc Register a user
 // @route POST /api/user/register
 // @access public
 const userRegister = asyncHandler(async (req, res) => {
-  console.log(req?.body);
   const { firstName, lastName, email, password, mobile } = req?.body;
   if (!firstName || !lastName || !email || !password || !mobile) {
     res.status(400);
@@ -37,8 +37,32 @@ const userRegister = asyncHandler(async (req, res) => {
 // @route POST /api/user/login
 // @access public
 const userLogin = asyncHandler(async (req, res) => {
-  res.status(200);
-  res.json({ message: "Get User Login successfully Called" });
+  const { email, password } = req?.body;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("All fields are mandatory");
+  }
+  let user = await db.User.findOne({
+    where: { email },
+  });
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    const accessToken = await  jwt.sign(
+      {
+        user: {
+          username: user.firstName,
+          email: user.email,
+          mobile: user.mobile,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1m" }
+    );
+    res.status(200).json({ message: "success", accessToken});
+  }else{
+    res.status(401)
+    throw new Error("Email or password is not valid")
+  }
 });
 
 module.exports = {

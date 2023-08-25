@@ -69,3 +69,5 @@ const errorHandler = (err, req, res, next) => {
             break;
     }
 }
+
+module.exports = errorHandler
