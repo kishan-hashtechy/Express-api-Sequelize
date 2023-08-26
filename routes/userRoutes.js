@@ -5,9 +5,10 @@ const {
     userRegister,
     userLogin
 } = require("../controllers/userController")
+const validateToken = require("../middleware/validateTokenHandler")
 
 
-router.get('/', getUserInfo)
+router.get('/', validateToken,getUserInfo)
 router.post('/register', userRegister)
 router.post('/login', userLogin)
 

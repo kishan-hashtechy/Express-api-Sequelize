@@ -22,6 +22,10 @@ module.exports = {
         type: Sequelize.STRING,
         require: true
       },
+      accessToken: {
+        type: Sequelize.STRING,
+        defaultValue: null
+      },
       mobile: {
         type: Sequelize.STRING
       },

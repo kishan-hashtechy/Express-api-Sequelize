@@ -7,10 +7,16 @@ const jwt = require("jsonwebtoken");
 // @route GET /api/user
 // @access private
 const getUserInfo = asyncHandler(async (req, res) => {
-  const data = await db.User.findAll();
-  res
-    .status(200)
-    .json({ message: "Get User Information successfully Called", data });
+  const email = req?.query?.email ?? null;
+  if (email) {
+    const user = await db.User.findOne({ where: { email } });
+    res
+      .status(200)
+      .json({ message: "Get User Information successfully Called", user });
+  }
+
+  res.status(400)
+  throw new Error("Something went wrong")
 });
 
 // @desc Register a user
@@ -47,7 +53,7 @@ const userLogin = asyncHandler(async (req, res) => {
   });
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    const accessToken = await  jwt.sign(
+    const accessToken = await jwt.sign(
       {
         user: {
           username: user.firstName,
@@ -56,12 +62,25 @@ const userLogin = asyncHandler(async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "5m" }
     );
-    res.status(200).json({ message: "success", accessToken});
-  }else{
-    res.status(401)
-    throw new Error("Email or password is not valid")
+    if (accessToken) {
+      const storeToken = await db.User.update(
+        { accessToken },
+        { where: { email } }
+      );
+      if (!storeToken) {
+        res.status(422);
+        throw new Error("UNPROCESSABLE_CONTENT");
+      }
+      res.status(200).json({ message: "success", accessToken });
+    } else {
+      res.status(422);
+      throw new Error("UNPROCESSABLE_CONTENT");
+    }
+  } else {
+    res.status(401);
+    throw new Error("Email or password is not valid");
   }
 });
 
