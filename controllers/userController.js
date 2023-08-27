@@ -9,7 +9,11 @@ const jwt = require("jsonwebtoken");
 const getUserInfo = asyncHandler(async (req, res) => {
   const email = req?.query?.email ?? null;
   if (email) {
-    const user = await db.User.findOne({ where: { email } });
+    const user = await db.User.findOne(
+      {attributes: ['id', 'firstName', 'lastName', 'email', 'mobile']},
+      {  where: { email } }
+      );
+    // const devices = await db.Device.findAll()
     res
       .status(200)
       .json({ message: "Get User Information successfully Called", user });
