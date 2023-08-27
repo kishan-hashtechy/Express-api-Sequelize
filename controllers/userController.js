@@ -9,18 +9,18 @@ const jwt = require("jsonwebtoken");
 const getUserInfo = asyncHandler(async (req, res) => {
   const email = req?.query?.email ?? null;
   if (email) {
-    const user = await db.User.findOne(
-      {attributes: ['id', 'firstName', 'lastName', 'email', 'mobile']},
-      {  where: { email } }
-      );
-    // const devices = await db.Device.findAll()
+    const user = await db.User.findOne({
+      where: { email },
+      attributes: ["id", "firstName", "lastName", "email", "mobile"],
+      include:["devices"]
+    });
     res
       .status(200)
       .json({ message: "Get User Information successfully Called", user });
   }
 
-  res.status(400)
-  throw new Error("Something went wrong")
+  res.status(400);
+  throw new Error("Something went wrong");
 });
 
 // @desc Register a user
