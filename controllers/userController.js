@@ -7,10 +7,11 @@ const jwt = require("jsonwebtoken");
 // @route GET /api/user
 // @access private
 const getUserInfo = asyncHandler(async (req, res) => {
-  const email = req?.query?.email ?? null;
-  if (email) {
+  // const email = req?.query?.email ?? null;
+const decodedUser = req?.user
+  if (decodedUser) {
     const user = await db.User.findOne({
-      where: { email },
+      where: { email: decodedUser?.email },
       attributes: ["id", "firstName", "lastName", "email", "mobile"],
       include:["devices"]
     });
